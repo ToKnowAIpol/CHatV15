@@ -1,9 +1,9 @@
-<lov-code>
 "use client";
 import { useEffect, useRef } from "react";
 import { SplashCursorProps } from "./types";
-import { getWebGLContext } from "./webgl-utils";
-import { baseVertexShader, copyShader, clearShader, displayShaderSource } from "./shaders";
+import { getWebGLContext, createShader, createProgram } from "./webgl-utils";
+import { baseVertexShader } from "./shaders/base-vertex";
+import { displayShader } from "./shaders/display";
 
 export function SplashCursor({
   SIM_RESOLUTION = 128,
@@ -27,8 +27,6 @@ export function SplashCursor({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const { gl, ext } = getWebGLContext(canvas);
-    
     function pointerPrototype() {
       this.id = -1;
       this.texcoordX = 0;
@@ -62,6 +60,7 @@ export function SplashCursor({
 
     let pointers = [new pointerPrototype()];
 
+    const { gl, ext } = getWebGLContext(canvas);
     if (!ext.supportLinearFiltering) {
       config.DYE_RESOLUTION = 256;
       config.SHADING = false;
@@ -246,17 +245,16 @@ export function SplashCursor({
       return shader;
     }
 
-    function addKeywords(source, keywords) {
+    function addKeywords(source: string, keywords?: string[]) {
       if (!keywords) return source;
       let keywordsString = "";
       keywords.forEach((keyword) => {
-        keywordsString += "#define " + keyword + "
-";
+        keywordsString += "#define " + keyword + "\n";
       });
       return keywordsString + source;
     }
 
-    const baseVertexShaderCompiled = compileShader(
+    const baseVertexShader = compileShader(
       gl.VERTEX_SHADER,
       `
         precision highp float;
@@ -279,7 +277,7 @@ export function SplashCursor({
       `
     );
 
-    const copyShaderCompiled = compileShader(
+    const copyShader = compileShader(
       gl.FRAGMENT_SHADER,
       `
         precision mediump float;
@@ -293,7 +291,7 @@ export function SplashCursor({
       `
     );
 
-    const clearShaderCompiled = compileShader(
+    const clearShader = compileShader(
       gl.FRAGMENT_SHADER,
       `
         precision mediump float;
@@ -308,7 +306,7 @@ export function SplashCursor({
      `
     );
 
-    const displayShaderSourceCompiled = `
+    const displayShaderSource = `
       precision highp float;
       precision highp sampler2D;
       varying vec2 vUv;
@@ -349,7 +347,7 @@ export function SplashCursor({
       }
     `;
 
-    const splatShaderCompiled = compileShader(
+    const splatShader = compileShader(
       gl.FRAGMENT_SHADER,
       `
         precision highp float;
@@ -371,7 +369,7 @@ export function SplashCursor({
       `
     );
 
-    const advectionShaderCompiled = compileShader(
+    const advectionShader = compileShader(
       gl.FRAGMENT_SHADER,
       `
         precision highp float;
@@ -412,7 +410,7 @@ export function SplashCursor({
       ext.supportLinearFiltering ? null : ["MANUAL_FILTERING"]
     );
 
-    const divergenceShaderCompiled = compileShader(
+    const divergenceShader = compileShader(
       gl.FRAGMENT_SHADER,
       `
         precision mediump float;
@@ -441,7 +439,7 @@ export function SplashCursor({
       `
     );
 
-    const curlShaderCompiled = compileShader(
+    const curlShader = compileShader(
       gl.FRAGMENT_SHADER,
       `
         precision mediump float;
@@ -464,7 +462,7 @@ export function SplashCursor({
       `
     );
 
-    const vorticityShaderCompiled = compileShader(
+    const vorticityShader = compileShader(
       gl.FRAGMENT_SHADER,
       `
         precision highp float;
@@ -499,7 +497,7 @@ export function SplashCursor({
       `
     );
 
-    const pressureShaderCompiled = compileShader(
+    const pressureShader = compileShader(
       gl.FRAGMENT_SHADER,
       `
         precision mediump float;
@@ -525,7 +523,7 @@ export function SplashCursor({
       `
     );
 
-    const gradientSubtractShaderCompiled = compileShader(
+    const gradientSubtractShader = compileShader(
       gl.FRAGMENT_SHADER,
       `
         precision mediump float;
@@ -583,19 +581,19 @@ export function SplashCursor({
 
     let dye, velocity, divergence, curl, pressure;
 
-    const copyProgram = new Program(baseVertexShaderCompiled, copyShaderCompiled);
-    const clearProgram = new Program(baseVertexShaderCompiled, clearShaderCompiled);
-    const splatProgram = new Program(baseVertexShaderCompiled, splatShaderCompiled);
-    const advectionProgram = new Program(baseVertexShaderCompiled, advectionShaderCompiled);
-    const divergenceProgram = new Program(baseVertexShaderCompiled, divergenceShaderCompiled);
-    const curlProgram = new Program(baseVertexShaderCompiled, curlShaderCompiled);
-    const vorticityProgram = new Program(baseVertexShaderCompiled, vorticityShaderCompiled);
-    const pressureProgram = new Program(baseVertexShaderCompiled, pressureShaderCompiled);
+    const copyProgram = new Program(baseVertexShader, copyShader);
+    const clearProgram = new Program(baseVertexShader, clearShader);
+    const splatProgram = new Program(baseVertexShader, splatShader);
+    const advectionProgram = new Program(baseVertexShader, advectionShader);
+    const divergenceProgram = new Program(baseVertexShader, divergenceShader);
+    const curlProgram = new Program(baseVertexShader, curlShader);
+    const vorticityProgram = new Program(baseVertexShader, vorticityShader);
+    const pressureProgram = new Program(baseVertexShader, pressureShader);
     const gradienSubtractProgram = new Program(
-      baseVertexShaderCompiled,
-      gradientSubtractShaderCompiled
+      baseVertexShader,
+      gradientSubtractShader
     );
-    const displayMaterial = new Material(baseVertexShaderCompiled, displayShaderSourceCompiled);
+    const displayMaterial = new Material(baseVertexShader, displayShaderSource);
 
     function initFramebuffers() {
       let simRes = getResolution(config.SIM_RESOLUTION);
@@ -900,8 +898,10 @@ export function SplashCursor({
         velocity.texelSizeX,
         velocity.texelSizeY
       );
-      gl.uniform1i(
-        pressureProgram.uniforms.uDivergence,
-        divergence.attach(0)
-      );
-      gl.uniform1i(pressureProgram.uniforms.uPressure,
+      gl.uniform1i(pressureProgram.uniforms.uPressure, pressure.read.attach(0));
+      gl.uniform1i(pressureProgram.uniformsuDivergence, divergence.attach(0));
+      blit(pressure.write);
+      pressure.swap();
+
+      // Gradient subtract
+      grad
