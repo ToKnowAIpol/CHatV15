@@ -9,66 +9,7 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      website_content: {
-        Row: {
-          analysis: Json | null
-          content: string
-          created_at: string
-          id: string
-          url: string
-        }
-        Insert: {
-          analysis?: Json | null
-          content: string
-          created_at?: string
-          id?: string
-          url: string
-        }
-        Update: {
-          analysis?: Json | null
-          content?: string
-          created_at?: string
-          id?: string
-          url?: string
-        }
-        Relationships: []
-      }
-      websites: {
-        Row: {
-          chat_enabled: boolean
-          chat_position: string
-          chat_theme: string
-          created_at: string
-          enabled: boolean
-          id: string
-          name: string
-          url: string
-          user_id: string
-        }
-        Insert: {
-          chat_enabled?: boolean
-          chat_position?: string
-          chat_theme?: string
-          created_at?: string
-          enabled?: boolean
-          id?: string
-          name: string
-          url: string
-          user_id: string
-        }
-        Update: {
-          chat_enabled?: boolean
-          chat_position?: string
-          chat_theme?: string
-          created_at?: string
-          enabled?: boolean
-          id?: string
-          name?: string
-          url?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
