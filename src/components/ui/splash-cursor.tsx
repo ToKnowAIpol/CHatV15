@@ -1,22 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-
-interface SplashCursorProps {
-  SIM_RESOLUTION?: number;
-  DYE_RESOLUTION?: number;
-  CAPTURE_RESOLUTION?: number;
-  DENSITY_DISSIPATION?: number;
-  VELOCITY_DISSIPATION?: number;
-  PRESSURE?: number;
-  PRESSURE_ITERATIONS?: number;
-  CURL?: number;
-  SPLAT_RADIUS?: number;
-  SPLAT_FORCE?: number;
-  SHADING?: boolean;
-  COLOR_UPDATE_SPEED?: number;
-  BACK_COLOR?: { r: number; g: number; b: number };
-  TRANSPARENT?: boolean;
-}
+import { SplashCursorProps } from "./types";
 
 export function SplashCursor({
   SIM_RESOLUTION = 128,
@@ -34,7 +18,7 @@ export function SplashCursor({
   BACK_COLOR = { r: 0.5, g: 0, b: 0 },
   TRANSPARENT = true,
 }: SplashCursorProps) {
-  const canvasRef = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -258,12 +242,11 @@ export function SplashCursor({
       return shader;
     }
 
-    function addKeywords(source, keywords) {
+    function addKeywords(source: string, keywords?: string[]) {
       if (!keywords) return source;
       let keywordsString = "";
       keywords.forEach((keyword) => {
-        keywordsString += "#define " + keyword + "
-";
+        keywordsString += "#define " + keyword + "\n";
       });
       return keywordsString + source;
     }
@@ -910,4 +893,55 @@ export function SplashCursor({
       gl.uniform2f(
         pressureProgram.uniforms.texelSize,
         velocity.texelSizeX,
-        velocity.tex
+        velocity.texelSizeY
+      );
+      gl.uniform1i(pressureProgram.uniforms.uPressure, pressure.read.attach(0));
+      gl.uniform1i(pressureProgram.uniformsuDivergence, divergence.attach(0));
+      blit(pressure.write);
+      pressure.swap();
+
+      // Gradient subtract
+      gradienSubtractProgram.bind();
+      gl.uniform1i(
+        gradienSubtractProgram.uniforms.uPressure,
+        pressure.read.attach(0)
+      );
+      gl.uniform1i(
+        gradienSubtractProgram.uniforms.uVelocity,
+        velocity.read.attach(0)
+      );
+      blit(pressure.write);
+      pressure.swap();
+    }
+
+    function render(target) {
+      gl.disable(gl.BLEND);
+      copyProgram.bind();
+      gl.uniform1i(copyProgram.uniforms.uTexture, target.attach(0));
+      blit(target);
+    }
+
+    updateFrame();
+  }, [
+    SIM_RESOLUTION,
+    DYE_RESOLUTION,
+    CAPTURE_RESOLUTION,
+    DENSITY_DISSIPATION,
+    VELOCITY_DISSIPATION,
+    PRESSURE,
+    PRESSURE_ITERATIONS,
+    CURL,
+    SPLAT_RADIUS,
+    SPLAT_FORCE,
+    SHADING,
+    COLOR_UPDATE_SPEED,
+    BACK_COLOR,
+    TRANSPARENT,
+  ]);
+
+  return (
+    <div className="fixed top-0 left-0 z-50 pointer-events-none">
+      <canvas ref={canvasRef} id="fluid" className="w-screen h-screen" />
+    </div>
+  );
+}
