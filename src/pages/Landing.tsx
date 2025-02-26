@@ -1,7 +1,7 @@
-
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
+import { SplashCursor } from "@/components/ui/splash-cursor";
 import { 
   BadgeCheck, 
   Zap, 
@@ -88,7 +88,15 @@ export default function Landing() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <SplashCursor 
+          DENSITY_DISSIPATION={4}
+          VELOCITY_DISSIPATION={2.5}
+          PRESSURE={0.15}
+          CURL={4}
+          SPLAT_RADIUS={0.3}
+          COLOR_UPDATE_SPEED={15}
+        />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center space-y-8">
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               AI Agents for Magical Support
