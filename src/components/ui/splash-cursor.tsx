@@ -1,4 +1,3 @@
-<lov-code>
 "use client";
 import { useEffect, useRef } from "react";
 
@@ -449,8 +448,7 @@ export function SplashCursor({
             if (vT.y > 1.0) { T = -C.y; }
             if (vB.y < 0.0) { B = -C.y; }
 
-            float div = 0.5 * (R - L + T - B);
-            gl_FragColor = vec4(div, 0.0, 0.0, 1.0);
+            float div = 0.5 * (R - L + T - B);\n            gl_FragColor = vec4(div, 0.0, 0.0, 1.0);
         }
       `
     );
@@ -912,4 +910,4 @@ export function SplashCursor({
       gl.uniform2f(
         pressureProgram.uniforms.texelSize,
         velocity.texelSizeX,
-        
+        velocity.tex
