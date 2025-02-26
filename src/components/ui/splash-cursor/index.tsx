@@ -800,7 +800,7 @@ export function SplashCursor({
       updateColors(dt);
       applyInputs();
       step(dt);
-      render(null);
+      render(dye.read);
       requestAnimationFrame(updateFrame);
     }
 
@@ -904,4 +904,3 @@ export function SplashCursor({
       pressure.swap();
 
       // Gradient subtract
-      grad
