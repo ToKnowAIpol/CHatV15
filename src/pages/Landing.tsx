@@ -1,11 +1,19 @@
-
 import { useNavigate } from "react-router-dom";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { StickyScrollRevealDemo } from "@/components/ui/sticky-scroll-demo";
+import { useMobileDetect } from "@/hooks/use-mobile-detect";
+import LandingMobile from "./LandingMobile";
 
 export default function Landing() {
   const navigate = useNavigate();
+  const isMobile = useMobileDetect();
 
+  // Render mobile version for mobile devices
+  if (isMobile) {
+    return <LandingMobile />;
+  }
+
+  // Render desktop version for desktop devices
   return (
     <div className="h-screen w-screen overflow-hidden relative bg-white dark:bg-black">
       {/* Theme Toggle */}
