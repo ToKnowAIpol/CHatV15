@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useThemeContext } from "@/contexts/ThemeContext";
 
 export const StickyScroll = ({
   content,
@@ -38,32 +39,50 @@ export const StickyScroll = ({
     setActiveCard(closestBreakpointIndex);
   });
 
-  const backgroundColors = [
-    "rgb(15 23 42)", // slate-900
-    "rgb(0 0 0)", // black
-    "rgb(23 23 23)", // neutral-900
-  ];
+  const { theme } = useThemeContext();
+  
+  // Different background colors for light and dark modes
+  const backgroundColors = {
+    light: [
+      "rgb(241 245 249)", // slate-100
+      "rgb(255 255 255)", // white
+      "rgb(248 250 252)", // slate-50
+    ],
+    dark: [
+      "rgb(15 23 42)", // slate-900
+      "rgb(0 0 0)", // black
+      "rgb(23 23 23)", // neutral-900
+    ]
+  };
 
-  const linearGradients = [
-    "linear-gradient(to bottom right, rgb(6 182 212), rgb(16 185 129))", // cyan-500 to emerald-500
-    "linear-gradient(to bottom right, rgb(236 72 153), rgb(99 102 241))", // pink-500 to indigo-500
-    "linear-gradient(to bottom right, rgb(249 115 22), rgb(234 179 8))", // orange-500 to yellow-500
-  ];
+  // Different gradient colors for light and dark modes
+  const linearGradients = {
+    light: [
+      "linear-gradient(to bottom right, rgb(6 182 212), rgb(16 185 129))", // cyan-500 to emerald-500
+      "linear-gradient(to bottom right, rgb(236 72 153), rgb(99 102 241))", // pink-500 to indigo-500
+      "linear-gradient(to bottom right, rgb(249 115 22), rgb(234 179 8))", // orange-500 to yellow-500
+    ],
+    dark: [
+      "linear-gradient(to bottom right, rgb(6 182 212), rgb(16 185 129))", // cyan-500 to emerald-500
+      "linear-gradient(to bottom right, rgb(236 72 153), rgb(99 102 241))", // pink-500 to indigo-500
+      "linear-gradient(to bottom right, rgb(249 115 22), rgb(234 179 8))", // orange-500 to yellow-500
+    ]
+  };
 
   const [backgroundGradient, setBackgroundGradient] = useState(
-    linearGradients[0]
+    linearGradients[theme][0]
   );
 
   useEffect(() => {
-    setBackgroundGradient(linearGradients[activeCard % linearGradients.length]);
-  }, [activeCard]);
+    setBackgroundGradient(linearGradients[theme][activeCard % linearGradients[theme].length]);
+  }, [activeCard, theme]);
 
   return (
     <motion.div
       animate={{
-        backgroundColor: backgroundColors[activeCard % backgroundColors.length],
+        backgroundColor: backgroundColors[theme][activeCard % backgroundColors[theme].length],
       }}
-      className="h-screen overflow-y-auto flex justify-center relative space-x-10"
+      className="h-screen overflow-y-auto flex flex-col lg:flex-row justify-center relative lg:space-x-10"
       ref={ref}
     >
       <div className="div relative flex items-start px-4">
@@ -77,7 +96,7 @@ export const StickyScroll = ({
                 animate={{
                   opacity: activeCard === index ? 1 : 0.3,
                 }}
-                className="text-2xl font-bold text-slate-100"
+                className="text-2xl font-bold text-slate-900 dark:text-slate-100"
               >
                 {item.title}
               </motion.h2>
@@ -88,15 +107,27 @@ export const StickyScroll = ({
                 animate={{
                   opacity: activeCard === index ? 1 : 0.3,
                 }}
-                className="text-kg text-slate-300 max-w-sm mt-10"
+                className="text-kg text-slate-700 dark:text-slate-300 max-w-sm mt-4 mb-6"
               >
                 {item.description}
               </motion.p>
+              
+              {/* Mobile content - shown only on small screens */}
+              <div 
+                className={`lg:hidden rounded-md overflow-hidden h-48 w-full mt-4 mb-8 ${activeCard === index ? 'block' : 'hidden'}`}
+                style={{ 
+                  background: index % 2 === 0 ? linearGradients[theme][index % linearGradients[theme].length] : undefined 
+                }}
+              >
+                {item.content}
+              </div>
             </div>
           ))}
           <div className="h-40" />
         </div>
       </div>
+      
+      {/* Desktop sticky content - hidden on small screens */}
       <div
         style={{ background: backgroundGradient }}
         className={cn(
