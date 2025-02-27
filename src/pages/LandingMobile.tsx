@@ -14,20 +14,20 @@ export default function LandingMobile() {
   ];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
+    <div className="h-screen mobile-height-fix overflow-hidden bg-white dark:bg-black">
       {/* Theme Toggle */}
       <div className="absolute top-4 right-4 z-10">
         <ThemeToggle />
       </div>
       
-      <div className="flex flex-col items-center justify-center h-screen px-4">
-        <p className="text-neutral-600 dark:text-neutral-200 text-xs sm:text-base mb-2">
+      <div className="flex flex-col items-center justify-center h-full px-4">
+        <p className="text-neutral-600 dark:text-neutral-200 text-xs sm:text-base mb-1">
           The road to freedom starts from here
         </p>
         
         <TypewriterEffectSmooth words={words} />
         
-        <div className="flex flex-col space-y-4 mt-8">
+        <div className="flex flex-col space-y-3 mt-6">
           <button 
             className="w-40 h-10 rounded-xl bg-black border dark:border-white border-transparent text-white text-sm"
             onClick={() => navigate('/auth')}

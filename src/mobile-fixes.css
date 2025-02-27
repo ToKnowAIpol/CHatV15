@@ -1,0 +1,10 @@
+/* Mobile-specific fixes */
+
+/* Fix for mobile browsers with dynamic address bars */
+@media screen and (max-width: 767px) {
+  .mobile-height-fix {
+    height: 100vh; /* Fallback */
+    height: -webkit-fill-available;
+    height: stretch; /* Modern browsers */
+  }
+}
