@@ -20,12 +20,12 @@ export default function LandingMobile() {
         <ThemeToggle />
       </div>
       
-      <div className="flex flex-col items-center justify-center h-full px-4">
-        <p className="text-neutral-600 dark:text-neutral-200 text-xs sm:text-base mb-1">
+      <div className="flex flex-col items-center justify-center h-full px-4 pt-10">
+        <p className="text-neutral-600 dark:text-neutral-200 text-xs sm:text-base mb-3">
           The road to freedom starts from here
         </p>
         
-        <TypewriterEffectSmooth words={words} />
+        <TypewriterEffectSmooth words={words} className="mb-8" />
         
         <div className="flex flex-col space-y-3 mt-6">
           <button 

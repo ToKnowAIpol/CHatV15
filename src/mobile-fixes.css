@@ -7,4 +7,16 @@
     height: -webkit-fill-available;
     height: stretch; /* Modern browsers */
   }
+  
+  /* Fix for dark mode color consistency */
+  .dark body,
+  .dark #root,
+  .dark [data-theme="dark"] {
+    background-color: #000 !important;
+  }
+  
+  /* Ensure content is properly centered */
+  .flex.flex-col.items-center.justify-center {
+    padding-bottom: 2rem;
+  }
 }
