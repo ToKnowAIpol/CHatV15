@@ -34,6 +34,14 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+    
+    /* Colors for StickyScroll component */
+    --cyan-500: rgb(6 182 212);
+    --emerald-500: rgb(16 185 129);
+    --pink-500: rgb(236 72 153);
+    --indigo-500: rgb(99 102 241);
+    --orange-500: rgb(249 115 22);
+    --yellow-500: rgb(234 179 8);
   }
 
   .dark {
@@ -64,6 +72,14 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+    
+    /* Colors for StickyScroll component */
+    --cyan-500: rgb(6 182 212);
+    --emerald-500: rgb(16 185 129);
+    --pink-500: rgb(236 72 153);
+    --indigo-500: rgb(99 102 241);
+    --orange-500: rgb(249 115 22);
+    --yellow-500: rgb(234 179 8);
   }
 }
 

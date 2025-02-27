@@ -1,49 +1,37 @@
 
-import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { StickyScrollRevealDemo } from "@/components/ui/sticky-scroll-demo";
 
 export default function Landing() {
   const navigate = useNavigate();
 
   return (
-    <div className="h-screen">
+    <div className="h-screen w-screen overflow-hidden relative bg-white dark:bg-black">
       {/* Theme Toggle */}
-      <div className="absolute top-4 right-4 z-10">
+      <div className="absolute top-4 right-4 z-50">
         <ThemeToggle />
       </div>
       
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 h-full flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-8">
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              AI Agents for Magical Support
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Create powerful AI agents that transform your customer support experience and drive more revenue.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                onClick={() => navigate('/auth')}
-                className="text-lg h-12 px-8 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-              >
-                Get Started Free
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => navigate('/auth?signup=true')}
-                className="text-lg h-12 px-8"
-              >
-                Book a Demo
-              </Button>
-            </div>
-            <p className="text-sm text-gray-500">No credit card required</p>
-          </div>
-        </div>
+      {/* Full-screen Sticky Scroll */}
+      <div className="h-full w-full">
+        <StickyScrollRevealDemo />
+      </div>
+      
+      {/* Buttons positioned at the bottom */}
+      <div className="absolute bottom-8 left-0 right-0 z-50 flex flex-col md:flex-row space-y-4 md:space-y-0 space-x-0 md:space-x-4 justify-center">
+        <button 
+          className="w-40 h-10 rounded-xl bg-black border dark:border-white border-transparent text-white text-sm"
+          onClick={() => navigate('/auth')}
+        >
+          Join now
+        </button>
+        <button 
+          className="w-40 h-10 rounded-xl bg-white text-black border border-black text-sm"
+          onClick={() => navigate('/auth?signup=true')}
+        >
+          Signup
+        </button>
       </div>
     </div>
   );
