@@ -8,6 +8,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
+import Pricing from "./pages/Pricing";
+import Resources from "./pages/Resources";
 import NotFound from "./pages/NotFound";
 import { AuthProvider, RequireAuth } from "./contexts/AuthContext";
 import { ThemeProvider } from "./components/ThemeProvider";
@@ -26,6 +28,8 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/resources" element={<Resources />} />
               <Route
                 path="/dashboard/*"
                 element={

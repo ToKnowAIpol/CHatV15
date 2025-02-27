@@ -21,6 +21,22 @@ export default function Landing() {
         <ThemeToggle />
       </div>
       
+      {/* Navigation Buttons */}
+      <div className="absolute top-4 left-4 z-50 flex space-x-3">
+        <button 
+          className="px-3 py-1 text-sm rounded-md bg-transparent border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300"
+          onClick={() => navigate('/pricing')}
+        >
+          Cennik
+        </button>
+        <button 
+          className="px-3 py-1 text-sm rounded-md bg-transparent border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300"
+          onClick={() => navigate('/resources')}
+        >
+          Zasoby
+        </button>
+      </div>
+      
       {/* Full-screen Sticky Scroll */}
       <div className="h-full w-full">
         <StickyScrollRevealDemo />

@@ -20,7 +20,24 @@ export default function LandingMobile() {
         <ThemeToggle />
       </div>
       
-      <div className="flex flex-col items-center justify-center h-full px-4 pt-10">
+      {/* Navigation Buttons */}
+      <div className="absolute top-4 left-4 z-10 flex space-x-3">
+        <button 
+          className="px-3 py-1 text-xs rounded-md bg-transparent border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300"
+          onClick={() => navigate('/pricing')}
+        >
+          Cennik
+        </button>
+        <button 
+          className="px-3 py-1 text-xs rounded-md bg-transparent border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300"
+          onClick={() => navigate('/resources')}
+        >
+          Zasoby
+        </button>
+      </div>
+      
+      {/* Main Content - Perfectly Centered */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center px-4">
         <p className="text-neutral-600 dark:text-neutral-200 text-xs sm:text-base mb-3">
           The road to freedom starts from here
         </p>
