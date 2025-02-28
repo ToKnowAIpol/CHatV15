@@ -31,10 +31,9 @@ export default function Auth() {
       // Get the current URL origin
       const origin = window.location.origin;
       
-      // Define allowed redirect URLs
-      const redirectUrl = origin.includes('localhost') 
-        ? `${origin}/dashboard` 
-        : 'https://c-hat-v15.vercel.app/dashboard';
+      // Use the current origin for the redirect URL
+      // This ensures it works with any Vercel deployment URL
+      const redirectUrl = `${origin}/dashboard`;
       
       console.log('Using redirect URL for email auth:', redirectUrl);
 
@@ -77,10 +76,9 @@ export default function Auth() {
       // Get the current URL origin
       const origin = window.location.origin;
       
-      // Define allowed redirect URLs
-      const redirectUrl = origin.includes('localhost') 
-        ? `${origin}/dashboard` 
-        : 'https://c-hat-v15.vercel.app/dashboard';
+      // Use the current origin for the redirect URL
+      // This ensures it works with any Vercel deployment URL
+      const redirectUrl = `${origin}/dashboard`;
       
       console.log('Using redirect URL:', redirectUrl);
       
