@@ -38,6 +38,15 @@ const App = () => (
                   </RequireAuth>
                 }
               />
+              {/* Add a route that handles the dashboard with access token */}
+              <Route
+                path="/dashboard/:params"
+                element={
+                  <RequireAuth>
+                    <Dashboard />
+                  </RequireAuth>
+                }
+              />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

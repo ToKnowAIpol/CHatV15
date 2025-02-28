@@ -92,8 +92,8 @@ export default function Auth() {
       
       // Use the current origin for the redirect URL
       // This ensures it works with any Vercel deployment URL
-      // Use the same redirect URL as email login - with /dashboard path
-      const redirectUrl = `${origin}/dashboard`;
+      // Use just the origin without the /dashboard path to avoid token issues
+      const redirectUrl = origin;
       
       console.log('Using redirect URL for Google auth:', redirectUrl);
       

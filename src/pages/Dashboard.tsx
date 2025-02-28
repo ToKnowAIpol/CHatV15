@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -18,7 +18,21 @@ import {
 export default function Dashboard() {
   const { session, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const params = useParams();
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Clean up URL if it contains access_token
+  useEffect(() => {
+    // Check if URL contains access_token
+    if (location.search.includes('access_token') || 
+        location.hash.includes('access_token') ||
+        location.pathname.includes('access_token')) {
+      console.log('Cleaning up URL with access token');
+      // Navigate to clean dashboard URL, replacing the history entry
+      navigate('/dashboard', { replace: true });
+    }
+  }, [location, navigate]);
 
   const handleSignOut = async () => {
     try {

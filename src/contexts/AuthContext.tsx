@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Session } from '@supabase/supabase-js';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
   session: Session | null;
@@ -51,16 +51,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session } = useContext(AuthContext);
   const location = useLocation();
+  const navigate = useNavigate();
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
+    // Check for access_token in URL
+    const hasAccessToken = 
+      location.search.includes('access_token') || 
+      location.hash.includes('access_token') ||
+      location.pathname.includes('access_token');
+
     // Add a small delay to ensure session is properly checked
     const timer = setTimeout(() => {
       setIsChecking(false);
+      
+      // If URL has access token but no session yet, wait a bit longer
+      if (hasAccessToken && !session) {
+        console.log('Access token found in URL, waiting for session...');
+        // Wait a bit longer for the session to be established
+        setTimeout(() => {
+          if (!session) {
+            console.log('Session still not established, redirecting to auth');
+            navigate('/auth', { replace: true });
+          }
+        }, 2000);
+      }
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [session]);
+  }, [session, location, navigate]);
 
   // Show loading state while checking session
   if (isChecking) {
