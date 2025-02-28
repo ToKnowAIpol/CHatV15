@@ -97,6 +97,7 @@ export default function Auth() {
       
       console.log('[Auth] Using redirect URL for Google auth:', redirectUrl);
       console.log('[Auth] Current URL:', window.location.href);
+      console.log('[Auth] Current domain:', window.location.hostname);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
