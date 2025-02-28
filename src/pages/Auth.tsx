@@ -98,15 +98,34 @@ export default function Auth() {
       console.log('[Auth] Using redirect URL for Google auth:', redirectUrl);
       console.log('[Auth] Current URL:', window.location.href);
       console.log('[Auth] Current domain:', window.location.hostname);
+      console.log('[Auth] Browser details:', {
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        cookiesEnabled: navigator.cookieEnabled
+      });
+      
+      // Add a timestamp to track when the auth process started
+      const authStartTime = new Date().toISOString();
+      console.log('[Auth] Auth process started at:', authStartTime);
+      
+      // Store the auth start time in localStorage for debugging
+      try {
+        localStorage.setItem('auth_start_time', authStartTime);
+        localStorage.setItem('auth_redirect_url', redirectUrl);
+      } catch (e) {
+        console.warn('[Auth] Could not store auth info in localStorage:', e);
+      }
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: redirectUrl,
           queryParams: {
-            // Add a custom parameter to track this auth attempt
+            // Add custom parameters to track this auth attempt
             prompt: 'select_account',
-            access_type: 'offline'
+            access_type: 'offline',
+            // Add a custom state parameter to help with debugging
+            state: `domain:${window.location.hostname},time:${Date.now()}`
           }
         },
       });
@@ -119,6 +138,14 @@ export default function Auth() {
       
       if (error) throw error;
       
+      // If we have a URL, redirect the user
+      if (data?.url) {
+        console.log('[Auth] Redirecting to OAuth provider URL:', data.url);
+        // Supabase will handle the redirect, but we'll log it for debugging
+      } else {
+        console.warn('[Auth] No URL returned from signInWithOAuth');
+      }
+      
       // No need to navigate here as Supabase will handle the redirect
       // But we'll add a fallback just in case
       setTimeout(() => {
@@ -129,6 +156,15 @@ export default function Auth() {
       
     } catch (error: any) {
       console.error('[Auth] Google authentication error:', error);
+      
+      // Log more details about the error
+      console.error('[Auth] Error details:', {
+        message: error.message,
+        name: error.name,
+        stack: error.stack,
+        code: error.code
+      });
+      
       toast({
         title: "Google Sign In Error",
         description: error.message || 'Failed to sign in with Google',
