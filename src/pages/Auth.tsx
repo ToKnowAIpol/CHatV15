@@ -112,8 +112,17 @@ export default function Auth() {
       try {
         localStorage.setItem('auth_start_time', authStartTime);
         localStorage.setItem('auth_redirect_url', redirectUrl);
+        localStorage.setItem('auth_intended_destination', '/dashboard');
       } catch (e) {
         console.warn('[Auth] Could not store auth info in localStorage:', e);
+      }
+      
+      // First check if we already have a session
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData.session) {
+        console.log('[Auth] User already has a session, redirecting to dashboard');
+        navigate('/dashboard', { replace: true });
+        return;
       }
       
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -125,7 +134,7 @@ export default function Auth() {
             prompt: 'select_account',
             access_type: 'offline',
             // Add a custom state parameter to help with debugging
-            state: `domain:${window.location.hostname},time:${Date.now()}`
+            state: `domain:${window.location.hostname},time:${Date.now()},dest:dashboard`
           }
         },
       });
@@ -142,17 +151,25 @@ export default function Auth() {
       if (data?.url) {
         console.log('[Auth] Redirecting to OAuth provider URL:', data.url);
         // Supabase will handle the redirect, but we'll log it for debugging
+        
+        // We'll also set a timeout to check if we're still on this page
+        setTimeout(() => {
+          console.log('[Auth] Checking if redirect happened...');
+          // If we're still here, try to redirect manually
+          window.location.href = data.url;
+        }, 2000);
       } else {
         console.warn('[Auth] No URL returned from signInWithOAuth');
+        
+        // Try to check for a session again
+        const { data: checkData } = await supabase.auth.getSession();
+        if (checkData.session) {
+          console.log('[Auth] Session found after sign in, redirecting to dashboard');
+          navigate('/dashboard', { replace: true });
+        } else {
+          console.warn('[Auth] Still no session after sign in attempt');
+        }
       }
-      
-      // No need to navigate here as Supabase will handle the redirect
-      // But we'll add a fallback just in case
-      setTimeout(() => {
-        // If we're still on this page after 5 seconds, try to navigate manually
-        console.log('[Auth] Fallback navigation to dashboard');
-        navigate('/dashboard');
-      }, 5000);
       
     } catch (error: any) {
       console.error('[Auth] Google authentication error:', error);

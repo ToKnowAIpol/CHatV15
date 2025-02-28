@@ -87,26 +87,51 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
     console.log('[RequireAuth] Has access token in URL:', hasAccessToken);
     console.log('[RequireAuth] Current session:', session ? 'Session exists' : 'No session');
 
-    // Add a small delay to ensure session is properly checked
-    const timer = setTimeout(() => {
-      console.log('[RequireAuth] Finished initial check delay');
-      setIsChecking(false);
-      
-      // If URL has access token but no session yet, wait a bit longer
-      if (hasAccessToken && !session) {
-        console.log('[RequireAuth] Access token found in URL, waiting for session...');
-        // Wait a bit longer for the session to be established
-        setTimeout(() => {
-          console.log('[RequireAuth] Extended wait completed, session:', session ? 'exists' : 'still not established');
-          if (!session) {
-            console.log('[RequireAuth] Session still not established, redirecting to auth');
-            navigate('/auth', { replace: true });
-          } else {
-            console.log('[RequireAuth] Session established during extended wait, navigating to dashboard');
-            navigate('/dashboard', { replace: true });
-          }
-        }, 3000);
+    // If we have an access token in the URL, handle it directly
+    if (hasAccessToken) {
+      console.log('[RequireAuth] Access token found in URL, redirecting to callback handler');
+      navigate('/callback' + location.search + location.hash, { replace: true });
+      return;
+    }
+
+    // Check session immediately and then double-check after a delay
+    const checkSession = async () => {
+      try {
+        console.log('[RequireAuth] Checking session with Supabase directly');
+        const { data, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('[RequireAuth] Error checking session:', error);
+          return null;
+        }
+        
+        if (data.session) {
+          console.log('[RequireAuth] Session found via direct check:', data.session.user.id);
+          return data.session;
+        }
+        
+        return null;
+      } catch (e) {
+        console.error('[RequireAuth] Exception checking session:', e);
+        return null;
       }
+    };
+
+    // Add a small delay to ensure session is properly checked
+    const timer = setTimeout(async () => {
+      console.log('[RequireAuth] Performing additional session check');
+      
+      // If we don't have a session from context, try to get it directly
+      if (!session) {
+        const directSession = await checkSession();
+        if (directSession) {
+          console.log('[RequireAuth] Found session via direct check, continuing');
+          setIsChecking(false);
+          return;
+        }
+      }
+      
+      setIsChecking(false);
     }, 1000);
 
     return () => clearTimeout(timer);

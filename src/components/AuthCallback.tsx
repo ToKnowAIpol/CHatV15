@@ -180,9 +180,9 @@ export default function AuthCallback() {
       console.log('[AuthCallback] Already authenticated, redirecting to dashboard');
       navigate('/dashboard', { replace: true });
     } else {
-      // If we're on the root path with no token and no session, show the landing page
-      console.log('[AuthCallback] No token or session, showing landing page');
-      // We don't need to navigate since the Landing component will be rendered
+      // If we're on the root path with no token and no session, redirect to auth page
+      console.log('[AuthCallback] No token or session, redirecting to auth page');
+      navigate('/auth', { replace: true });
     }
   }, [location, navigate, session]);
 
