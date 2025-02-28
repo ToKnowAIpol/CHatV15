@@ -1,9 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
 
 export default function LandingMobile() {
   const navigate = useNavigate();
+  const { session } = useAuth();
+  
+  // Redirect to dashboard if user is already authenticated
+  useEffect(() => {
+    if (session) {
+      console.log('[LandingMobile] User is already authenticated, redirecting to dashboard');
+      navigate('/dashboard');
+    }
+  }, [session, navigate]);
 
   const words = [
     { text: "Build" },

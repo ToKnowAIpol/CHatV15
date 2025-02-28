@@ -3,10 +3,21 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { StickyScrollRevealDemo } from "@/components/ui/sticky-scroll-demo";
 import { useMobileDetect } from "@/hooks/use-mobile-detect";
 import LandingMobile from "./LandingMobile";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
 
 export default function Landing() {
   const navigate = useNavigate();
   const isMobile = useMobileDetect();
+  const { session } = useAuth();
+  
+  // Redirect to dashboard if user is already authenticated
+  useEffect(() => {
+    if (session) {
+      console.log('[Landing] User is already authenticated, redirecting to dashboard');
+      navigate('/dashboard');
+    }
+  }, [session, navigate]);
 
   // Render mobile version for mobile devices
   if (isMobile) {
