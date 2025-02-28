@@ -1,21 +1,5 @@
 {
-  "version": 2,
-  "routes": [
-    {
-      "src": "/callback(.*)",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/dashboard(.*)",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/auth(.*)",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
