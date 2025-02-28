@@ -17,7 +17,6 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const location = useLocation();
 
   useEffect(() => {
     console.log('[AuthProvider] Initializing, checking for session');
@@ -43,15 +42,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
     });
 
-    // Log current URL for debugging
-    console.log('[AuthProvider] Current location:', {
-      pathname: location.pathname,
-      search: location.search,
-      hash: location.hash
-    });
-
     return () => subscription.unsubscribe();
-  }, [location]);
+  }, []);
 
   const signOut = async () => {
     console.log('[AuthProvider] Signing out');
