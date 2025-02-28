@@ -24,15 +24,52 @@ export default function Dashboard() {
 
   // Clean up URL if it contains access_token
   useEffect(() => {
+    console.log('[Dashboard] Component mounted, session:', session ? 'exists' : 'none');
+    if (session) {
+      console.log('[Dashboard] User ID:', session.user.id);
+      console.log('[Dashboard] User email:', session.user.email);
+      console.log('[Dashboard] Auth provider:', session.user?.app_metadata?.provider || 'email');
+    }
+    
+    console.log('[Dashboard] Current URL:', window.location.href);
+    console.log('[Dashboard] Location details:', {
+      pathname: location.pathname,
+      search: location.search,
+      hash: location.hash
+    });
+    
     // Check if URL contains access_token
-    if (location.search.includes('access_token') || 
-        location.hash.includes('access_token') ||
-        location.pathname.includes('access_token')) {
-      console.log('Cleaning up URL with access token');
+    const hasAccessToken = 
+      location.search.includes('access_token') || 
+      location.hash.includes('access_token') ||
+      location.pathname.includes('access_token');
+    
+    console.log('[Dashboard] URL has access token:', hasAccessToken);
+    
+    if (hasAccessToken) {
+      console.log('[Dashboard] Cleaning up URL with access token');
       // Navigate to clean dashboard URL, replacing the history entry
       navigate('/dashboard', { replace: true });
+    } else {
+      console.log('[Dashboard] URL is clean, no redirect needed');
     }
-  }, [location, navigate]);
+    
+    // Log any params from the URL
+    const params = new URLSearchParams(location.search);
+    const paramEntries = Array.from(params.entries());
+    if (paramEntries.length > 0) {
+      console.log('[Dashboard] URL parameters:', Object.fromEntries(paramEntries));
+    }
+    
+    // Check for hash params (common in OAuth redirects)
+    if (location.hash) {
+      const hashParams = new URLSearchParams(location.hash.substring(1));
+      const hashEntries = Array.from(hashParams.entries());
+      if (hashEntries.length > 0) {
+        console.log('[Dashboard] Hash parameters:', Object.fromEntries(hashEntries));
+      }
+    }
+  }, [location, navigate, session]);
 
   const handleSignOut = async () => {
     try {

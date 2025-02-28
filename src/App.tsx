@@ -11,6 +11,7 @@ import Pricing from "./pages/Pricing";
 import Resources from "./pages/Resources";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import AuthCallback from "./components/AuthCallback";
 import { AuthProvider, RequireAuth } from "./contexts/AuthContext";
 import { ThemeProvider } from "./components/ThemeProvider";
 
@@ -30,6 +31,13 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/resources" element={<Resources />} />
+              {/* Special route for handling auth callback */}
+              <Route 
+                path="/callback" 
+                element={
+                  <AuthCallback />
+                } 
+              />
               <Route
                 path="/dashboard"
                 element={

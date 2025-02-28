@@ -87,24 +87,34 @@ export default function Auth() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
+      console.log('[Auth] Starting Google sign-in process');
+      
       // Get the current URL origin
       const origin = window.location.origin;
       
-      // Use the current origin for the redirect URL
-      // This ensures it works with any Vercel deployment URL
-      // Use just the origin without the /dashboard path to avoid token issues
-      const redirectUrl = origin;
+      // Use the callback route for handling authentication
+      const redirectUrl = `${origin}/callback`;
       
-      console.log('Using redirect URL for Google auth:', redirectUrl);
+      console.log('[Auth] Using redirect URL for Google auth:', redirectUrl);
+      console.log('[Auth] Current URL:', window.location.href);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: redirectUrl,
+          queryParams: {
+            // Add a custom parameter to track this auth attempt
+            prompt: 'select_account',
+            access_type: 'offline'
+          }
         },
       });
       
-      console.log('Google sign in response:', { data, error });
+      console.log('[Auth] Google sign in initiated:', { 
+        url: data?.url,
+        provider: data?.provider,
+        error: error ? error.message : 'none'
+      });
       
       if (error) throw error;
       
@@ -112,12 +122,12 @@ export default function Auth() {
       // But we'll add a fallback just in case
       setTimeout(() => {
         // If we're still on this page after 5 seconds, try to navigate manually
-        console.log('Fallback navigation to dashboard');
+        console.log('[Auth] Fallback navigation to dashboard');
         navigate('/dashboard');
       }, 5000);
       
     } catch (error: any) {
-      console.error('Google authentication error:', error);
+      console.error('[Auth] Google authentication error:', error);
       toast({
         title: "Google Sign In Error",
         description: error.message || 'Failed to sign in with Google',
