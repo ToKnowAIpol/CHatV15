@@ -5,7 +5,7 @@ console.log('\n=== Supabase Authentication Configuration Helper ===\n');
 
 // Get the current URL
 const localUrl = 'http://localhost:8080';
-const productionUrl = 'https://chatv15.vercel.app';
+const productionUrl = 'https://c-hat-v15.vercel.app';
 
 console.log('To fix authentication issues, you need to update your Supabase project settings.\n');
 console.log('1. Log in to your Supabase dashboard: https://app.supabase.com');

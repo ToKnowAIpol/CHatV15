@@ -34,7 +34,7 @@ export default function Auth() {
       // Define allowed redirect URLs
       const redirectUrl = origin.includes('localhost') 
         ? `${origin}/dashboard` 
-        : 'https://chatv15.vercel.app/dashboard';
+        : 'https://c-hat-v15.vercel.app/dashboard';
       
       console.log('Using redirect URL for email auth:', redirectUrl);
 
@@ -80,7 +80,7 @@ export default function Auth() {
       // Define allowed redirect URLs
       const redirectUrl = origin.includes('localhost') 
         ? `${origin}/dashboard` 
-        : 'https://chatv15.vercel.app/dashboard';
+        : 'https://c-hat-v15.vercel.app/dashboard';
       
       console.log('Using redirect URL:', redirectUrl);
       
