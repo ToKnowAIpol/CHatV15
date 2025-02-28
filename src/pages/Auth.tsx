@@ -38,31 +38,45 @@ export default function Auth() {
       console.log('Using redirect URL for email auth:', redirectUrl);
 
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: redirectUrl
           }
         });
+        
+        console.log('Sign up response:', { data, error });
+        
         if (error) throw error;
+        
         toast({
           title: "Success!",
           description: "Please check your email to confirm your account.",
         });
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
+        
+        console.log('Sign in response:', { data, error });
+        
         if (error) throw error;
-        navigate('/dashboard');
+        
+        // Check if session was created successfully
+        if (data?.session) {
+          console.log('Authentication successful, redirecting to dashboard');
+          navigate('/dashboard');
+        } else {
+          throw new Error('Failed to create session');
+        }
       }
     } catch (error: any) {
       console.error('Authentication error:', error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || 'An unknown error occurred',
         variant: "destructive",
       });
     } finally {
@@ -78,24 +92,35 @@ export default function Auth() {
       
       // Use the current origin for the redirect URL
       // This ensures it works with any Vercel deployment URL
-      const redirectUrl = `${origin}/dashboard`;
+      // Try with just the origin first, without the /dashboard path
+      const redirectUrl = origin;
       
-      console.log('Using redirect URL:', redirectUrl);
+      console.log('Using redirect URL for Google auth:', redirectUrl);
       
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: redirectUrl,
         },
       });
       
+      console.log('Google sign in response:', { data, error });
+      
       if (error) throw error;
+      
       // No need to navigate here as Supabase will handle the redirect
+      // But we'll add a fallback just in case
+      setTimeout(() => {
+        // If we're still on this page after 5 seconds, try to navigate manually
+        console.log('Fallback navigation to dashboard');
+        navigate('/dashboard');
+      }, 5000);
+      
     } catch (error: any) {
-      console.error('Authentication error:', error);
+      console.error('Google authentication error:', error);
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Google Sign In Error",
+        description: error.message || 'Failed to sign in with Google',
         variant: "destructive",
       });
       setIsLoading(false);

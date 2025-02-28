@@ -51,11 +51,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session } = useContext(AuthContext);
   const location = useLocation();
+  const [isChecking, setIsChecking] = useState(true);
 
+  useEffect(() => {
+    // Add a small delay to ensure session is properly checked
+    const timer = setTimeout(() => {
+      setIsChecking(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [session]);
+
+  // Show loading state while checking session
+  if (isChecking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Verifying authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to auth page if no session
   if (!session) {
+    console.log('No session found, redirecting to auth page');
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
+  console.log('Session found, rendering protected content');
   return <>{children}</>;
 }
 

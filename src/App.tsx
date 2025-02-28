@@ -5,11 +5,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SplashCursor } from "@/components/ui/splash-cursor";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
 import Pricing from "./pages/Pricing";
 import Resources from "./pages/Resources";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import { AuthProvider, RequireAuth } from "./contexts/AuthContext";
 import { ThemeProvider } from "./components/ThemeProvider";
@@ -31,10 +31,10 @@ const App = () => (
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/resources" element={<Resources />} />
               <Route
-                path="/dashboard/*"
+                path="/dashboard"
                 element={
                   <RequireAuth>
-                    <Index />
+                    <Dashboard />
                   </RequireAuth>
                 }
               />
