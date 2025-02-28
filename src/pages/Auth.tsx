@@ -28,10 +28,23 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
+      // Get the current URL origin
+      const origin = window.location.origin;
+      
+      // Define allowed redirect URLs
+      const redirectUrl = origin.includes('localhost') 
+        ? `${origin}/dashboard` 
+        : 'https://chatv15.vercel.app/dashboard';
+      
+      console.log('Using redirect URL for email auth:', redirectUrl);
+
       if (isSignUp) {
         const { error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            emailRedirectTo: redirectUrl
+          }
         });
         if (error) throw error;
         toast({
@@ -47,6 +60,7 @@ export default function Auth() {
         navigate('/dashboard');
       }
     } catch (error: any) {
+      console.error('Authentication error:', error);
       toast({
         title: "Error",
         description: error.message,
@@ -60,15 +74,27 @@ export default function Auth() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
+      // Get the current URL origin
+      const origin = window.location.origin;
+      
+      // Define allowed redirect URLs
+      const redirectUrl = origin.includes('localhost') 
+        ? `${origin}/dashboard` 
+        : 'https://chatv15.vercel.app/dashboard';
+      
+      console.log('Using redirect URL:', redirectUrl);
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
+          redirectTo: redirectUrl,
         },
       });
+      
       if (error) throw error;
       // No need to navigate here as Supabase will handle the redirect
     } catch (error: any) {
+      console.error('Authentication error:', error);
       toast({
         title: "Error",
         description: error.message,
